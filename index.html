@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+       background: #fff; color: #111; }
+
+/* ── Navbar ── */
+.navbar {
+  background: #fff;
+  padding: 0 24px;
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 2px solid #0d1f35;
+}
+.navbar-logo {
+  font-size: 18px; font-weight: 800; color: #0d1f35; letter-spacing: -0.5px;
+}
+.navbar-logo span { color: #f47c20; }
+.navbar-links { display: flex; gap: 24px; }
+.navbar-links a {
+  color: #ccd6e0; font-size: 13px; text-decoration: none; font-weight: 500;
+}
+.navbar-links a:hover { color: #fff; }
+.navbar-actions { display: flex; gap: 10px; align-items: center; }
+.btn-signin {
+  border: 1px solid #ccd6e0; color: #ccd6e0; background: transparent;
+  padding: 5px 14px; border-radius: 6px; font-size: 12px; cursor: pointer;
+}
+.btn-signup {
+  background: #f47c20; color: #fff; border: none;
+  padding: 5px 14px; border-radius: 6px; font-size: 12px;
+  font-weight: 700; cursor: pointer;
+}
+
+/* ── Page layout ── */
+.page { max-width: 1200px; margin: 20px auto; padding: 0 12px; }
+
+/* ── Race Header Card ── */
+.race-header-card {
+  background: #fff;
+  border-radius: 10px 10px 0 0;
+  padding: 14px 18px;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  border-bottom: 2px solid #0d1f35;
+}
+.race-title {
+  font-size: 16px; font-weight: 800; color: #0d1f35; margin-bottom: 4px;
+}
+.race-sub { font-size: 12px; font-weight: 500; color: #555; line-height: 1.6; }
+.race-sub b { color: #f47c20; }
+.race-badges { display: flex; gap: 8px; align-items: center; flex-shrink: 0; margin-left: 20px; }
+.badge-mile {
+  background: #f47c20; color: #fff;
+  font-size: 13px; font-weight: 800;
+  padding: 6px 14px; border-radius: 6px;
+}
+.badge-insured {
+  border: 1px solid #0d1f35; color: #0d1f35;
+  font-size: 9px; font-weight: 600;
+  padding: 4px 8px; border-radius: 6px; text-align: center; line-height: 1.3;
+}
+
+/* ── AI Race Preview ── */
+.ai-section {
+  background: #fff;
+  border-left: 4px solid #0d9488;
+  padding: 10px 16px;
+  font-size: 12px; font-weight: 500; line-height: 1.7; color: #222;
+  border-bottom: 1px solid #e5e7eb;
+}
+.ai-section p + p { margin-top: 8px; }
+.ai-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; color: #0d9488; margin-bottom: 6px;
+}
+.ai-tag-horse { color: #7c3aed; }
+.ai-section-horse { border-left-color: #7c3aed; }
+
+/* ── Horse Info Card ── */
+.horse-card {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+}
+.horse-info {
+  display: grid;
+  grid-template-columns: 36px 245px 215px 195px 182px 1fr;
+  padding: 10px 0;
+  align-items: start;
+  border-bottom: 1px solid #e5e7eb;
+}
+.hi-post {
+  padding: 2px 6px; font-weight: 800; font-size: 16px;
+  text-align: center; color: #0d1f35;
+}
+.hi-name-block { padding: 0 6px; }
+.hi-name { font-size: 16px; font-weight: 800; color: #0d1f35; }
+.hi-meta { font-size: 11px; font-weight: 500; color: #555; line-height: 1.6; }
+.hi-silk {
+  width: 22px; height: 18px; display: inline-block;
+  background: #f47c20; border-radius: 2px; vertical-align: middle; margin-right: 4px;
+}
+.hi-block { padding: 0 6px; font-size: 11px; font-weight: 500; line-height: 1.7; color: #333; }
+.hi-block label { color: #888; font-size: 10.5px; }
+.hi-stats, .hi-surf { padding: 0 6px; font-size: 11px; font-weight: 500; line-height: 1.7; color: #333; }
+.sr { display: flex; flex-wrap: nowrap; gap: 2px; align-items: baseline; }
+.sr .lbl  { font-weight: 700; color: #0d1f35; flex: 0 0 32px; font-size: 11px; }
+.sr .lbl-w{ font-weight: 700; color: #0d1f35; flex: 0 0 64px; font-size: 11px; }
+.sr .n    { flex: 0 0 14px; text-align: center; font-size: 11px; }
+.sr .e    { flex: 0 0 50px; text-align: right;  font-size: 11px; }
+.sr .fig  { flex: 0 0 18px; text-align: center; font-size: 11px; color: #c00; font-weight: 700; }
+
+/* ── PP Table ── */
+.pp-wrap { background: #fff; overflow-x: auto; }
+.pp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.pp-table thead tr {
+  background: #f8f9fb;
+  border-bottom: 2px solid #0d1f35;
+}
+.pp-table thead td {
+  padding: 4px 4px;
+  font-weight: 700; color: #0d1f35;
+  white-space: nowrap; text-align: center;
+  font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.3px;
+}
+.pp-table tbody td {
+  border-bottom: 1px solid #f0f0f0;
+  border-right: 1px solid #f0f0f0;
+  padding: 4px 4px;
+  vertical-align: top;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.pp-table tbody tr:hover { background: #f5f9ff; }
+
+/* Column widths */
+.pp-date  { width: 66px; text-align: left !important; }
+.pp-trk   { width: 36px; }
+.pp-dist  { width: 36px; }
+.pp-surf  { width: 20px; }
+.pp-class { width: 72px; text-align: left !important; }
+.pp-cond  { width: 30px; }
+/* 260px */
+.pp-post  { width: 24px; }
+.pp-q1    { width: 40px; }
+.pp-q2    { width: 40px; }
+.pp-q3    { width: 40px; }
+.pp-str   { width: 40px; }
+.pp-fin   { width: 38px; font-weight: 700; }
+/* 222px */
+.pp-jkey  { width: 95px; text-align: left !important; }
+.pp-wt    { width: 40px; }
+.pp-odds  { width: 38px; }
+.pp-rnrs  { width: 32px; }
+/* 193px */
+.pp-time  { width: 54px; }
+.pp-beyer { width: 62px; font-weight: 700; color: #c00; }
+.ra-ml { text-align: center; white-space: nowrap; width: 38px; font-weight: 600; color: #555; }
+.pp-purse { width: 55px; text-align: right !important; }
+/* 139px */
+.pp-comment { width: auto; text-align: left !important; color: #555; }
+
+/* Beyer highlight */
+.beyer-hi { background: #fff3e0; color: #e65100; font-weight: 800; border-radius: 2px; padding: 0 2px; }
+
+/* ── Works line ── */
+.works-line {
+  background: #f8f9fb;
+  padding: 6px 14px;
+  font-size: 11px; font-weight: 500; color: #555;
+  border-top: 1px solid #e5e7eb;
+  border-radius: 0 0 10px 10px;
+}
+.works-line strong { color: #0d1f35; margin-right: 6px; }
+.works-line .sep { color: #ccc; margin: 0 5px; }
+.works-line a { color: #f47c20; text-decoration: none; font-weight: 700; margin-left: 8px; }
+
+/* ── Gallop AI Advanced Data ── */
+.gai-pace {
+  margin-top: 5px; background: #f0fdf9; border: 1px solid #99e6da;
+  border-radius: 4px; padding: 3px 7px; font-size: 10.5px; color: #444;
+  line-height: 1.6; display: block;
+}
+.gai-pace-tag {
+  display: inline-block; background: #0d9488; color: #fff;
+  font-size: 8px; font-weight: 800; padding: 1px 4px; border-radius: 2px;
+  vertical-align: middle; margin-right: 5px; letter-spacing: 0.5px;
+}
+.gai-pace b { color: #0d6b5e; }
+
+/* Compact jockey stats — 5 cards in a row */
+.jky-compact {
+  background: #fafffe; border-top: 1px solid #d1f5ef;
+  padding: 7px 16px; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap;
+}
+.jky-compact-label { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.jky-badge { background: #0d9488; color: #fff; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; }
+.jky-name-text { font-size: 10.5px; font-weight: 700; color: #0d1f35; white-space: nowrap; }
+.jky-divider { width: 1px; height: 38px; background: #c8ede9; flex-shrink: 0; }
+.jky-cards { display: flex; gap: 4px; flex: 1; }
+.jky-card {
+  flex: 1; background: #f0fdf9; border: 1px solid #d1f5ef; border-radius: 5px;
+  padding: 4px 6px; text-align: center; min-width: 0;
+}
+.jky-card .jc-lbl { font-size: 8.5px; color: #888; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.3px; }
+.jky-card .jc-sts { font-size: 9.5px; color: #666; display: block; margin-bottom: 2px; }
+.jky-card .jc-win { font-size: 12px; font-weight: 800; color: #0d9488; display: block; }
+.jky-card.jky-hot { background: #fff8f0; border-color: #f9c896; }
+.jky-card.jky-hot .jc-win { color: #f47c20; }
+.jky-card.jky-warn { background: #fef2f2; border-color: #fecaca; }
+.jky-card.jky-warn .jc-win { color: #c00; }
+
+/* Race Analysis Section */
+.race-analysis { background: #fafffe; border-top: 1px solid #d1f5ef; padding: 10px 16px 12px; }
+.ra-header { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+.ra-badge { background: #0d9488; color: #fff; font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px; }
+.ra-title { font-size: 10.5px; font-weight: 700; color: #0d6b5e; text-transform: uppercase; letter-spacing: 0.4px; }
+.ra-meta { font-size: 10px; color: #999; }
+
+.ra-table { width: 100%; border-collapse: collapse; font-size: 10.5px; }
+.ra-table thead td { background: #0d9488; color: #fff; padding: 3px 7px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+.ra-table tbody td { padding: 3px 7px; border-bottom: 1px solid #e8f5f3; font-weight: 500; color: #333; vertical-align: middle; }
+.ra-table tbody tr:last-child td { border-bottom: none; }
+.ra-table tbody tr:hover { background: #f5fffd; }
+.ra-post { font-weight: 700; color: #0d1f35; text-align: center; width: 24px; }
+.ra-horse { font-weight: 700; color: #0d1f35; white-space: nowrap; }
+.ra-fig { font-weight: 800; color: #c00; text-align: center; width: 46px; }
+.ra-style { text-align: center; font-size: 10px; white-space: nowrap; }
+.ra-note { font-size: 10px; color: #555; }
+.ra-dim { color: #aaa; font-style: italic; font-weight: 400; }
+.ai-mark { font-size: 7.5px; font-weight: 800; color: #fff; background: #0d9488; padding: 0 2px; border-radius: 2px; vertical-align: text-top; margin-left: 2px; letter-spacing: 0; }
+
+.ra-lower { display: flex; gap: 14px; align-items: stretch; }
+.ra-left { flex: 1; min-width: 0; }
+.ra-right { width: 182px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+
+.ml-table { width: 100%; border-collapse: collapse; font-size: 10.5px; margin-bottom: 6px; }
+.ml-table thead td { background: #0d1f35; color: #fff; padding: 3px 7px; font-size: 9.5px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
+.ml-table tbody td { padding: 3px 7px; border-bottom: 1px solid #eee; font-weight: 500; white-space: nowrap; }
+.ml-table tbody tr:last-child td { border-bottom: none; }
+.ml-wpct { color: #0d9488; font-weight: 700; text-align: right; }
+.ml-horse { font-weight: 600; }
+.ml-ref { font-size: 9.5px; color: #999; line-height: 1.7; border-top: 1px solid #eee; padding-top: 5px; }
+.ml-ref b { color: #555; }
+
+.pred-box { border: 1px solid #d1f5ef; border-radius: 6px; overflow: hidden; }
+.pred-box-hdr { background: #0d1f35; color: #fff; padding: 4px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; }
+.pred-row { display: flex; align-items: flex-start; gap: 7px; padding: 5px 10px; border-bottom: 1px solid #f0f0f0; }
+.pred-row:last-child { border-bottom: none; }
+.pred-place { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 800; flex-shrink: 0; margin-top: 2px; }
+.p1st { background: #f8d54c; color: #5a3e00; }
+.p2nd { background: #b0b8c4; color: #fff; }
+.p3rd { background: #c97b32; color: #fff; }
+.pred-info { flex: 1; min-width: 0; }
+.pred-horse { font-size: 10.5px; font-weight: 800; color: #0d1f35; }
+.pred-reason { font-size: 9.5px; color: #555; line-height: 1.4; margin-top: 1px; }
+
+.ls-box { border: 2px solid #f47c20; border-radius: 6px; overflow: hidden; flex: 1; }
+.ls-hdr { background: #f47c20; color: #fff; padding: 4px 10px; font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; }
+.ls-horse { padding: 5px 10px 1px; font-size: 13px; font-weight: 800; color: #0d1f35; }
+.ls-sub { padding: 0 10px 5px; font-size: 10px; color: #e06000; font-weight: 700; }
+.ls-bullets { padding: 0 10px 7px; }
+.ls-bullets li { font-size: 9.5px; color: #444; padding: 1.5px 0; font-weight: 500; list-style: none; }
+.ls-bullets li::before { content: "•"; color: #f47c20; font-weight: 800; margin-right: 4px; }
+
+/* card border-radius wrapper */
+.form-card {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+  margin-bottom: 24px;
+}
+
+/* Track course diagram */
+.track-diagram {
+  display: inline-flex; flex-direction: column; align-items: center;
+  margin-right: 8px;
+}
+.track-diagram svg { display: block; }
+.track-diagram-lbl {
+  font-size: 8px; color: #666; margin-top: 1px; font-weight: 600;
+}
+
+/* Morning line badge inline with silks */
+.hi-ml {
+  display: inline-block; background: #0d1f35; color: #fff;
+  font-size: 10px; font-weight: 800; padding: 1px 5px; border-radius: 3px;
+  letter-spacing: 0.4px; margin-right: 6px;
+}
+
+/* Aux meta line: Sales / Equip / Prior Trainer */
+.hi-meta-aux {
+  font-size: 10px; color: #555; margin-top: 3px; line-height: 1.6;
+}
+.hi-meta-aux .aux-lbl {
+  color: #888; font-weight: 600;
+}
+.hi-meta-aux .aux-empty {
+  color: #aaa; font-style: italic; font-weight: 400;
+}
+.hi-meta-aux .aux-filled {
+  color: #c00; font-weight: 700;
+}
+.hi-meta-aux .aux-sep { color: #ddd; margin: 0 6px; }
+
+/* Trainer situational stats — same card pattern as .jky-compact */
+.trn-compact {
+  background: #fafffe; border-top: 1px solid #d1f5ef;
+  padding: 7px 16px; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap;
+}
+.trn-compact-label { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.trn-badge {
+  background: #0d1f35; color: #fff; font-size: 9px; font-weight: 800;
+  padding: 1px 5px; border-radius: 3px; letter-spacing: 0.5px;
+}
+.trn-name-text { font-size: 10.5px; font-weight: 700; color: #0d1f35; white-space: nowrap; }
+.trn-divider { width: 1px; height: 38px; background: #c8ede9; flex-shrink: 0; }
+.trn-cards { display: flex; gap: 4px; flex: 1; }
+.trn-card {
+  flex: 1; background: #f0fdf9; border: 1px solid #d1f5ef; border-radius: 5px;
+  padding: 4px 6px; text-align: center; min-width: 0;
+}
+.trn-card .tc-lbl { font-size: 8.5px; color: #888; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0.3px; }
+.trn-card .tc-sts { font-size: 9.5px; color: #666; display: block; margin-bottom: 2px; }
+.trn-card .tc-win { font-size: 11px; font-weight: 800; color: #0d9488; display: block; }
+.trn-card.trn-hot { background: #fff8f0; border-color: #f9c896; }
+.trn-card.trn-hot .tc-win { color: #f47c20; }
+.trn-card.trn-warn { background: #fef2f2; border-color: #fecaca; }
+.trn-card.trn-warn .tc-win { color: #c00; }
+
+/* PP row pace figure column */
+.pp-pace { width: 56px; font-weight: 700; color: #c00; text-align: center; white-space: nowrap; }
+.pp-pace .pace-arrow { color: #888; font-weight: 600; margin: 0 1px; }
+
+/* Length superscripts in position calls */
+.pp-len { font-size: 8.5px; vertical-align: super; color: #888; font-weight: 500; margin-left: 1px; }
+
+/* Prior-trainer separator row inside PP table (DRF style) */
+.pp-prior-row td {
+  background: #fffbe6;
+  border-top: 1px dashed #d4b955;
+  border-bottom: 1px dashed #d4b955;
+  padding: 4px 10px !important;
+  font-size: 10.5px;
+  color: #6b5310;
+  font-weight: 600;
+  text-align: left !important;
+  white-space: normal;
+}
+.pp-prior-row .prior-tag {
+  display: inline-block; background: #d4b955; color: #fff;
+  font-size: 9px; font-weight: 800; padding: 1px 5px; border-radius: 3px;
+  letter-spacing: 0.4px; margin-right: 6px;
+}
+.pp-prior-row .prior-stats { color: #444; font-weight: 500; margin-left: 4px; }
+.pp-prior-row .prior-demo { color: #aaa; font-style: italic; font-weight: 500; margin-left: 8px; }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="navbar-logo">Gallop<span>AI</span></div>
+</nav>
+
+<div class="page">
+<div class="form-card">
+
+  <!-- Race Header -->
+  <div class="race-header-card">
+    <div>
+      <div class="race-title">Santa Anita &nbsp;R9 &nbsp;|&nbsp; Sat May 02 &nbsp;|&nbsp; Post Time: 5:15 PT</div>
+      <div class="race-sub">1 Mile (Turf) &nbsp;<b>MAIDEN SPECIAL WEIGHT</b> &nbsp;Purse: $65,000 (+$19,500 CBOIF) &nbsp;·&nbsp; Maidens, Fillies 3YO &nbsp;·&nbsp; Wt: 122 lbs &nbsp;·&nbsp; <b>Beyer Par: 74</b> &nbsp;·&nbsp; Trk Rec: 1:31<sup>3</sup></div>
+      <div class="race-sub" style="margin-top:2px;">Wagers: Win $2 &nbsp;·&nbsp; Place $2 &nbsp;·&nbsp; Show $2 &nbsp;·&nbsp; Exacta $1 &nbsp;·&nbsp; Trifecta $1 &nbsp;·&nbsp; Superfecta $0.10 &nbsp;·&nbsp; Double $2 &nbsp;·&nbsp; Late Pick 3 $3 (15% takeout) &nbsp;·&nbsp; 3X3 $1</div>
+    </div>
+    <div class="race-badges">
+      <div class="track-diagram" title="1 Mile Turf, 1 turn">
+        <svg width="46" height="34" viewBox="0 0 46 34">
+          <ellipse cx="23" cy="17" rx="20" ry="13" fill="none" stroke="#0d9488" stroke-width="1.6"/>
+          <line x1="23" y1="2.5" x2="23" y2="6.5" stroke="#0d1f35" stroke-width="2"/>
+          <circle cx="40" cy="22" r="2.2" fill="#f47c20"/>
+          <text x="23" y="20" text-anchor="middle" font-size="6" fill="#666" font-weight="700">FIN</text>
+        </svg>
+        <div class="track-diagram-lbl">1mT &middot; 1 turn</div>
+      </div>
+      <div class="badge-mile">1 MILE</div>
+      <div class="badge-insured">Race<br>Insured</div>
+    </div>
+  </div>
+
+  <!-- AI Race Preview -->
+  <div class="ai-section">
+    <div class="ai-tag">&#x2728; AI Race Preview</div>
+    <p>Saturday's ninth at Santa Anita brings together a balanced group of three-year-old fillies going a mile on the turf, with the race likely to run through three main contenders. Lookin At Diamond owns the sharpest figure in the field and finished strongly in her debut. Soul Sister has been consistently competitive on this course, including an 89 runner-up effort earlier in the meet. Medjugorje, another filly with an 89 top, continues to improve for the Mandella barn and should appreciate the distance.</p>
+    <p>A potential upset may come from Nerida (FR), who has been steadily progressing since arriving from France and earned an 86 while finishing well despite traffic. With blinkers added and more distance to work with, she appears capable of surprising if the pace becomes even slightly contested.</p>
+  </div>
+
+  <!-- Race Analysis (Gallop AI Advanced) -->
+  <div class="race-analysis">
+    <div class="ra-header">
+      <span class="ra-badge">Gallop AI</span>
+      <span class="ra-title">Race Analysis</span>
+      <span class="ra-meta">&nbsp;· SA R9 &nbsp;5/2/2026 &nbsp;Turf 1 Mile &nbsp;3YO Maiden (Fillies)</span>
+    </div>
+
+    <div class="ra-lower">
+      <div class="ra-left">
+        <table class="ra-table">
+          <thead>
+            <tr>
+              <td class="ra-post">#</td>
+              <td>Horse</td>
+              <td class="ra-fig">Speed Index<span class="ai-mark">AI</span></td>
+              <td>Turf Exp</td>
+              <td class="ra-style">Style</td>
+              <td class="ra-ml">M/L</td>
+              <td class="ml-wpct">Win%<span class="ai-mark">AI</span></td>
+              <td>Key Note</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ra-post">1</td><td class="ra-horse">Ethereal Quality</td>
+              <td class="ra-fig">81</td><td>0 starts (dirt only)</td>
+              <td class="ra-style">Closer</td><td class="ra-ml">15/1</td><td class="ml-wpct">6.3%</td>
+              <td class="ra-note">1st turf start; all 3 career starts on dirt</td>
+            </tr>
+            <tr>
+              <td class="ra-post">2</td><td class="ra-horse">Natural Diamond</td>
+              <td class="ra-fig ra-dim">-</td><td class="ra-dim">Unraced</td>
+              <td class="ra-style ra-dim">-</td><td class="ra-ml">6/1</td><td class="ml-wpct">14.3%</td>
+              <td class="ra-note">First career start; work 4F :47.3 (2nd/78)</td>
+            </tr>
+            <tr>
+              <td class="ra-post">3</td><td class="ra-horse">Decisive Deception</td>
+              <td class="ra-fig">84</td><td>2 starts SA Turf</td>
+              <td class="ra-style">Midpack</td><td class="ra-ml">6/1</td><td class="ml-wpct">14.3%</td>
+              <td class="ra-note">Excuses in both starts (gate, traffic); upside</td>
+            </tr>
+            <tr>
+              <td class="ra-post">4</td><td class="ra-horse">Lookin At Diamond</td>
+              <td class="ra-fig" style="color:#e06000;">90</td><td>1 start SA Turf</td>
+              <td class="ra-style">Plodder</td><td class="ra-ml">10/1</td><td class="ml-wpct">9.1%</td>
+              <td class="ra-note">Field-best Speed Index; closed 10th&rarr;4th; blinkers added</td>
+            </tr>
+            <tr>
+              <td class="ra-post">5</td><td class="ra-horse">Soul Sister</td>
+              <td class="ra-fig">89</td><td>5 starts (3 Turf)</td>
+              <td class="ra-style">Midpack</td><td class="ra-ml" style="color:#0d1f35;font-weight:800;">5/2</td><td class="ml-wpct" style="color:#0d6b5e; font-weight:800;">28.6%</td>
+              <td class="ra-note">Most turf exp in field; near-miss 2nd on 2/28</td>
+            </tr>
+            <tr>
+              <td class="ra-post">6</td><td class="ra-horse">Medjugorje</td>
+              <td class="ra-fig">89</td><td>2 starts SA Turf</td>
+              <td class="ra-style">Closer</td><td class="ra-ml" style="color:#0d1f35;font-weight:800;">4/1</td><td class="ml-wpct" style="color:#0d6b5e; font-weight:800;">20.0%</td>
+              <td class="ra-note">Mandella barn; jockey Fresu 19% win rate; improving</td>
+            </tr>
+            <tr>
+              <td class="ra-post">7</td><td class="ra-horse">Dream From Within</td>
+              <td class="ra-fig">87</td><td>2 starts (FG Turf)</td>
+              <td class="ra-style">Midpack</td><td class="ra-ml">12/1</td><td class="ml-wpct">7.7%</td>
+              <td class="ra-note">2 trainer changes; SA debut, ships from FG</td>
+            </tr>
+            <tr>
+              <td class="ra-post">8</td><td class="ra-horse">Via de La Valle</td>
+              <td class="ra-fig ra-dim">-</td><td class="ra-dim">Unraced</td>
+              <td class="ra-style ra-dim">-</td><td class="ra-ml">15/1</td><td class="ml-wpct">6.3%</td>
+              <td class="ra-note">First career start; ordinary workouts</td>
+            </tr>
+            <tr>
+              <td class="ra-post">9</td><td class="ra-horse">Nerida (FR)</td>
+              <td class="ra-fig">86</td><td>3 starts (France + SA)</td>
+              <td class="ra-style">Plodder</td><td class="ra-ml" style="color:#0d1f35;font-weight:800;">3/1</td><td class="ml-wpct" style="color:#0d6b5e; font-weight:800;">25.0%</td>
+              <td class="ra-note">French-bred; 2nd in SA 1&#x215B;M Turf on 3/21</td>
+            </tr>
+            <tr>
+              <td class="ra-post">10</td><td class="ra-horse">Daring Pursuit</td>
+              <td class="ra-fig">82</td><td>3 starts SA Turf</td>
+              <td class="ra-style">Midpack</td><td class="ra-ml">20/1</td><td class="ml-wpct">4.8%</td>
+              <td class="ra-note">Finished 11th last out; jockey Belmont 0 wins</td>
+            </tr>
+            <tr>
+              <td class="ra-post">11</td><td class="ra-horse">Zuraya (GB)</td>
+              <td class="ra-fig">79</td><td>2 starts SA Turf</td>
+              <td class="ra-style">Speed</td><td class="ra-ml">30/1</td><td class="ml-wpct">3.2%</td>
+              <td class="ra-note">Front-runner; faded in both turf starts</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="ra-right">
+        <div class="pred-box">
+          <div class="pred-box-hdr">Top 3 Prediction</div>
+          <div class="pred-row">
+            <div class="pred-place p1st">1</div>
+            <div class="pred-info">
+              <div class="pred-horse">Soul Sister #5</div>
+              <div class="pred-reason">Most turf exp; 89 fig; near-miss 2nd on 2/28</div>
+            </div>
+          </div>
+          <div class="pred-row">
+            <div class="pred-place p2nd">2</div>
+            <div class="pred-info">
+              <div class="pred-horse">Nerida (FR) #9</div>
+              <div class="pred-reason">French-bred; 2nd in 1&#x215B;M turf; closing style suits</div>
+            </div>
+          </div>
+          <div class="pred-row">
+            <div class="pred-place p3rd">3</div>
+            <div class="pred-info">
+              <div class="pred-horse">Medjugorje #6</div>
+              <div class="pred-reason">Mandella; 89 fig; Fresu 19%; improving</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ls-box">
+          <div class="ls-hdr">&#x26A1; Value Bet</div>
+          <div class="ls-horse">Lookin At Diamond #4</div>
+          <div class="ls-sub">Speed Index 90 (Field Best)</div>
+          <ul class="ls-bullets">
+            <li>Closed 10th&rarr;4th in debut</li>
+            <li>Last start: 6&frac12;f (Plodder style)</li>
+            <li>1 mile distance suits closing type</li>
+            <li>Blinkers added</li>
+            <li>High value if 10/1 or longer</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Horse Info -->
+  <div class="horse-card">
+    <div class="horse-info">
+      <div class="hi-post">1</div>
+
+      <div class="hi-name-block">
+        <div class="hi-name">Ethereal Quality</div>
+        <div class="hi-meta">B.f.3(Mar) &nbsp;L122</div>
+        <div class="hi-meta">Own: Manzanita Stables LLC</div>
+        <div class="hi-meta" style="margin-top:3px; font-size:10.5px;">
+          <span class="hi-ml">15-1</span><span class="hi-silk"></span>Orange, Yellow Inverted Chevrons, Yellow
+        </div>
+        <div class="hi-meta-aux">
+          <span class="aux-lbl">Sales:</span> <span class="aux-empty">Home Bred (no auction)</span>
+          <span class="aux-sep">|</span>
+          <span class="aux-lbl">Equip:</span> <span class="aux-empty">no change</span>
+        </div>
+        <div class="gai-pace" style="margin-top:5px;">
+          <span class="gai-pace-tag">Gallop AI</span> Early <b>70</b> &nbsp;·&nbsp; Closer &nbsp;·&nbsp; Late <b>57</b>
+        </div>
+      </div>
+
+      <div class="hi-block">
+        <div><label>Sire:</label> Quality Road (Elusive Quality) $100,000</div>
+        <div><label>Dam:</label> Mei Ling (Empire Maker)</div>
+        <div><label>Br:</label> (Ky) Manzanita Stables LLC</div>
+      </div>
+
+      <div class="hi-block">
+        <div><label>J:</label> Frey K</div>
+        <div style="font-size:10.5px; color:#888;">(21 2 0 8 .10) &nbsp;2026:(162 13 .08)</div>
+        <div style="margin-top:3px;"><label>Tr:</label> Drysdale Neil</div>
+        <div style="font-size:10.5px; color:#888;">(7 1 0 1 .14) &nbsp;2026:(48 5 .10)</div>
+      </div>
+
+      <div class="hi-stats">
+        <div class="sr"><span class="lbl">Life</span><span class="n">3</span><span class="n">M</span><span class="n">0</span><span class="n">1</span><span class="e">$12,800</span><span class="fig">58</span></div>
+        <div class="sr"><span class="lbl">2026</span><span class="n">2</span><span class="n">M</span><span class="n">0</span><span class="n">0</span><span class="e">$5,600</span><span class="fig">58</span></div>
+        <div class="sr"><span class="lbl">2025</span><span class="n">1</span><span class="n">M</span><span class="n">0</span><span class="n">1</span><span class="e">$7,200</span><span class="fig">50</span></div>
+        <div class="sr"><span class="lbl">SA</span><span class="n">0</span><span class="n"></span><span class="n">0</span><span class="n">0</span><span class="e">$0</span><span class="fig">-</span></div>
+      </div>
+
+      <div class="hi-surf">
+        <div class="sr"><span class="lbl-w">D.Fst</span><span class="n">3</span><span class="n"></span><span class="n">0</span><span class="n">1</span><span class="e">$12,800</span><span class="fig">58</span></div>
+        <div class="sr"><span class="lbl-w">Wet(411)</span><span class="n">0</span><span class="n"></span><span class="n">0</span><span class="n">0</span><span class="e">$0</span><span class="fig">-</span></div>
+        <div class="sr"><span class="lbl-w">Synth(359)</span><span class="n">0</span><span class="n"></span><span class="n">0</span><span class="n">0</span><span class="e">$0</span><span class="fig">-</span></div>
+        <div class="sr"><span class="lbl-w">Turf(325)</span><span class="n">0</span><span class="n"></span><span class="n">0</span><span class="n">0</span><span class="e">$0</span><span class="fig">-</span></div>
+        <div class="sr"><span class="lbl-w">Dst(379)</span><span class="n">0</span><span class="n"></span><span class="n">0</span><span class="n">0</span><span class="e">$0</span><span class="fig">-</span></div>
+      </div>
+    </div>
+
+    <!-- Jockey Compact Stats -->
+    <div class="jky-compact">
+      <div class="jky-compact-label">
+        <span class="jky-badge">Gallop AI</span>
+        <span class="jky-name-text">Frey K</span>
+      </div>
+      <div class="jky-divider"></div>
+      <div class="jky-cards">
+        <div class="jky-card">
+          <span class="jc-lbl">2026</span>
+          <span class="jc-sts">162 sts</span>
+          <span class="jc-win">13W · 8%</span>
+        </div>
+        <div class="jky-card">
+          <span class="jc-lbl">Turf</span>
+          <span class="jc-sts">42 sts</span>
+          <span class="jc-win">5W · 12%</span>
+        </div>
+        <div class="jky-card">
+          <span class="jc-lbl">1 Mile</span>
+          <span class="jc-sts">28 sts</span>
+          <span class="jc-win">3W · 11%</span>
+        </div>
+        <div class="jky-card jky-warn">
+          <span class="jc-lbl">&gt;6/1 LS</span>
+          <span class="jc-sts">67 sts</span>
+          <span class="jc-win">4W &middot; 6%</span>
+        </div>
+        <div class="jky-card jky-hot">
+          <span class="jc-lbl">J/T Drysdale</span>
+          <span class="jc-sts">18 sts</span>
+          <span class="jc-win">3W · 17% &#x2605;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trainer Situational Stats (card layout, mirrors .jky-compact) -->
+    <div class="trn-compact">
+      <div class="trn-compact-label">
+        <span class="trn-badge">TRAINER</span>
+        <span class="trn-name-text">Drysdale Neil</span>
+      </div>
+      <div class="trn-divider"></div>
+      <div class="trn-cards">
+        <div class="trn-card">
+          <span class="tc-lbl">61-180D</span>
+          <span class="tc-sts">27 sts</span>
+          <span class="tc-win">15% &middot; $2.27</span>
+        </div>
+        <div class="trn-card trn-warn">
+          <span class="tc-lbl">1st Turf</span>
+          <span class="tc-sts">11 sts</span>
+          <span class="tc-win">9% &middot; $0.69</span>
+        </div>
+        <div class="trn-card trn-warn">
+          <span class="tc-lbl">Dirt/Turf</span>
+          <span class="tc-sts">9 sts</span>
+          <span class="tc-win">11% &middot; $0.51</span>
+        </div>
+        <div class="trn-card">
+          <span class="tc-lbl">Turf</span>
+          <span class="tc-sts">147 sts</span>
+          <span class="tc-win">10% &middot; $1.29</span>
+        </div>
+        <div class="trn-card">
+          <span class="tc-lbl">Routes</span>
+          <span class="tc-sts">92 sts</span>
+          <span class="tc-win">7% &middot; $0.84</span>
+        </div>
+        <div class="trn-card trn-hot">
+          <span class="tc-lbl">MdnSpWt</span>
+          <span class="tc-sts">49 sts</span>
+          <span class="tc-win">16% &middot; $2.67 &#x2605;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Horse Summary -->
+    <div class="ai-section ai-section-horse">
+      <div class="ai-tag ai-tag-horse">&#x1F4A1; AI Horse Summary</div>
+      <p>Ethereal Quality enters off three dirt starts in which she consistently showed a late-running style but struggled with slow beginnings. Her best effort came at Del Mar, where she overcame an off-slow break and rallied four-wide to finish third. A daughter of Quality Road out of an Empire Maker mare, she owns an 81 top figure and has trained sharply this month, including a standout five-furlong move in 59 seconds. With her pedigree and closing profile, the switch to turf and a mile distance could bring out her best if she can secure a cleaner start.</p>
+    </div>
+  </div>
+
+  <!-- PP Table -->
+  <div class="pp-wrap">
+    <table class="pp-table">
+      <colgroup>
+        <col class="pp-date"><col class="pp-trk"><col class="pp-dist"><col class="pp-surf">
+        <col class="pp-class"><col class="pp-cond">
+        <col class="pp-post"><col class="pp-q1"><col class="pp-q2"><col class="pp-q3">
+        <col class="pp-str"><col class="pp-fin">
+        <col class="pp-jkey"><col class="pp-wt"><col class="pp-odds"><col class="pp-rnrs">
+        <col class="pp-time"><col class="pp-beyer"><col class="pp-pace"><col class="pp-purse">
+        <col class="pp-comment">
+      </colgroup>
+      <thead>
+        <tr>
+          <td class="pp-date">Date</td>
+          <td class="pp-trk">Rc/Trk</td>
+          <td class="pp-dist">Dist</td>
+          <td class="pp-surf">Sf</td>
+          <td class="pp-class">Class</td>
+          <td class="pp-cond">Cond</td>
+          <td class="pp-post">PP</td>
+          <td class="pp-q1">1/4</td>
+          <td class="pp-q2">1/2</td>
+          <td class="pp-q3">3/4</td>
+          <td class="pp-str">Str</td>
+          <td class="pp-fin">Fin</td>
+          <td class="pp-jkey">Jockey</td>
+          <td class="pp-wt">Wt</td>
+          <td class="pp-odds">Odds</td>
+          <td class="pp-rnrs">#Rnrs</td>
+          <td class="pp-time">Time</td>
+          <td class="pp-beyer">Speed Index</td>
+          <td class="pp-pace">Pace E&rarr;L</td>
+          <td class="pp-purse">Purse</td>
+          <td class="pp-comment">Top Finishers</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pp-date">1Feb26</td>
+          <td class="pp-trk">2SA</td>
+          <td class="pp-dist">1 1/16</td>
+          <td class="pp-surf">fst</td>
+          <td class="pp-class">Md Sp Wt 70k</td>
+          <td class="pp-cond">-</td>
+          <td class="pp-post">2</td>
+          <td class="pp-q1">:23</td>
+          <td class="pp-q2">:47</td>
+          <td class="pp-q3">1:11</td>
+          <td class="pp-str">5<sup class="pp-len">5</sup></td>
+          <td class="pp-fin" style="color:#888;">eased</td>
+          <td class="pp-jkey">Berrios H</td>
+          <td class="pp-wt">L122f</td>
+          <td class="pp-odds">5.80</td>
+          <td class="pp-rnrs">5</td>
+          <td class="pp-time">1:38</td>
+          <td class="pp-beyer">-</td>
+          <td class="pp-pace" style="color:#bbb;">&ndash;</td>
+          <td class="pp-purse">$70k</td>
+          <td class="pp-comment">Forced Entry, Wolf Hill, Banzai Betty &nbsp;<i style="color:#888;">Step slow, inside, eased</i></td>
+        </tr>
+        <tr>
+          <td class="pp-date">8Jan26</td>
+          <td class="pp-trk">4SA</td>
+          <td class="pp-dist">6f</td>
+          <td class="pp-surf">fst</td>
+          <td class="pp-class">Md Sp Wt 72k</td>
+          <td class="pp-cond">C</td>
+          <td class="pp-post">4</td>
+          <td class="pp-q1">:22<sup>3</sup></td>
+          <td class="pp-q2">:45<sup>4</sup></td>
+          <td class="pp-q3">:58</td>
+          <td class="pp-str">7<sup class="pp-len">1&frac34;</sup></td>
+          <td class="pp-fin">4<sup class="pp-len">2&frac34;</sup></td>
+          <td class="pp-jkey">Berrios H</td>
+          <td class="pp-wt">L122f</td>
+          <td class="pp-odds">48.60</td>
+          <td class="pp-rnrs">10</td>
+          <td class="pp-time">1:11<sup>2</sup></td>
+          <td class="pp-beyer"><span class="beyer-hi">58</span></td>
+          <td class="pp-pace">81<span class="pace-arrow">&rarr;</span>15</td>
+          <td class="pp-purse">$72k</td>
+          <td class="pp-comment">French Blue, Feisty Red Hed, Piny Woods &nbsp;<i style="color:#888;">Off slow, 2-5w, kept on</i></td>
+        </tr>
+        <tr class="pp-prior-row">
+          <td colspan="21">
+            <span class="prior-tag">PREV TRAINER</span>
+            Previously trained by <b>Smith John</b> 2024:
+            <span class="prior-stats">(157 sts &middot; 22-18-15 &middot; Win 14%)</span>
+            <span class="prior-demo">[demo row &middot; only renders when horse changed trainer; #1 Ethereal Quality has no prior trainer in production]</span>
+          </td>
+        </tr>
+        <tr>
+          <td class="pp-date">23Nov25</td>
+          <td class="pp-trk">8Dmr</td>
+          <td class="pp-dist">6&frac12;f</td>
+          <td class="pp-surf">fst</td>
+          <td class="pp-class">Md Sp Wt 61k</td>
+          <td class="pp-cond">-</td>
+          <td class="pp-post">8</td>
+          <td class="pp-q1">:22<sup>2</sup></td>
+          <td class="pp-q2">:45</td>
+          <td class="pp-q3">1:10</td>
+          <td class="pp-str">4<sup class="pp-len">1</sup></td>
+          <td class="pp-fin">3<sup class="pp-len">2&frac12;</sup></td>
+          <td class="pp-jkey">Ayuso A</td>
+          <td class="pp-wt">122f</td>
+          <td class="pp-odds">62.30</td>
+          <td class="pp-rnrs">8</td>
+          <td class="pp-time">1:16<sup>3</sup></td>
+          <td class="pp-beyer">50</td>
+          <td class="pp-pace">78<span class="pace-arrow">&rarr;</span>09</td>
+          <td class="pp-purse">$61k</td>
+          <td class="pp-comment">Nimh, Miss Watermelon, <b>Ethereal Quality</b> &nbsp;<i style="color:#888;">Off slow, 4wd, gained 3r</i></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Works -->
+  <div class="works-line">
+    <strong>WORKS:</strong>
+    27Apr26 SA 4f fst :49H 10/18
+    <span class="sep">·</span>
+    20Apr26 SA 5f fst :59H 1/13
+    <span class="sep">·</span>
+    14Apr26 SA 4f fst :48<sup>3</sup>H 2/6
+    <span class="sep">·</span>
+    06Apr26 SA 4f fst :48<sup>4</sup>H 35/64
+    <span class="sep">·</span>
+    30Mar26 SA 4f fst :49<sup>1</sup>H 39/54
+    <span class="sep">·</span>
+    23Mar26 SA 4f fst :49H 13/23
+  </div>
+
+</div><!-- /form-card -->
+</div><!-- /page -->
+</body>
+</html>
